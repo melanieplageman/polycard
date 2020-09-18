@@ -1,7 +1,7 @@
 require 'sequel'
 
-DB = Sequel.postgres('cards')
-DB.extension :pg_array
+DATABASE_NAME = 'cards' unless defined? DATABASE_NAME
+DB = Sequel.postgres(DATABASE_NAME)
 
 class Deck < Sequel::Model(DB[:deck])
   one_to_many :cards

@@ -20,7 +20,6 @@ describe SideApp do
       deck_id = Deck.insert(name: 'test_deck')
       card_id = Card.insert(deck_id: deck_id)
       side_id = Side.insert(card_id: card_id, content: 'something')
-      puts side_id
       get("/side/#{side_id}")
       expect(last_response.status).to eq(200)
     end

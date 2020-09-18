@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'polycard/database'
+require 'rouge'
 
 class SideApp < Sinatra::Base
   set :show_exceptions, :after_handler
@@ -15,6 +16,12 @@ class SideApp < Sinatra::Base
 
   error Sequel::ForeignKeyConstraintViolation do
     halt 404, "Card not found"
+  end
+
+  def rouge(content)
+    theme = Rouge::Themes::Base16.mode(:light)
+    formatter = Rouge::Formatters::HTMLInline.new(theme)
+    Rouge.highlight(content, 'ruby', formatter)
   end
 
   # R - Retrieve

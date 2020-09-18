@@ -4,7 +4,7 @@
 <body>
 
   <% if @side.content_type == 'ruby' %>
-    <pre><%= @side.content%></pre>
+    <pre><%= rouge(@side.content)%></pre>
   <% else %>
     <p><%= @side.content %></p>
   <% end %>

@@ -35,4 +35,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'http'
   spec.add_runtime_dependency 'sequel'
   spec.add_runtime_dependency 'pg'
+  spec.add_runtime_dependency 'rouge'
 end
