@@ -3,10 +3,10 @@
 
 <body>
 
-  <% if @side.format == 'ruby' %>
-    <pre><%= @side.text %></pre>
+  <% if @side.content_type == 'ruby' %>
+    <pre><%= @side.content%></pre>
   <% else %>
-    <p><%= @side.text %></p>
+    <p><%= @side.content %></p>
   <% end %>
 
   <% unless @next_side.nil? %>

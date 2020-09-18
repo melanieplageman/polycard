@@ -3,32 +3,32 @@ require 'http'
 require 'json'
 # require 'optparse'
 
-class Flashcard
+class Card 
 end
 
 class Side
-  def initialize(text)
-    @text = text 
+  def initialize(content)
+    @content = content 
   end
 
   def to_json 
-    JSON.generate({ :text => @text })
+    JSON.generate({ :content => @content })
   end
 end
 
-def new_flashcard(args)
-  response = HTTP.post("http://localhost:8080/flashcard") 
-  flashcard_id = JSON.parse(response.body)['id']
-  add_side([flashcard_id, *args])
-  puts flashcard_id
+def new_card(args)
+  response = HTTP.post("http://localhost:8080/card") 
+  card_id = JSON.parse(response.body)['id']
+  add_side([card_id, *args])
+  puts card_id
 end
 
 def add_side(args)
-  flashcard_id, *args = args
-  args.map do |side_text|
-    Side.new(side_text)
+  card_id, *args = args
+  args.map do |side_content|
+    Side.new(side_content)
   end.each do |side|
-    response = HTTP.post("http://localhost:8080/flashcard/#{flashcard_id}/side", :body => side.to_json)
+    response = HTTP.post("http://localhost:8080/card/#{card_id}/side", :body => side.to_json)
 
     puts JSON.parse(response.body)
   end
@@ -36,7 +36,7 @@ end
 
 command, *args = ARGV
 if command == 'new'
-  new_flashcard(args)
+  new_card(args)
 elsif command == 'add'
   add_side(args)
 else
@@ -45,18 +45,18 @@ end
 
 
 
-# response = HTTP.get("http://localhost:8080/flashcard/#{id}")
+# response = HTTP.get("http://localhost:8080/card/#{id}")
 
-# response = HTTP.put("http://localhost:8080/flashcard/#{id}", :body => flashcard.to_json)
+# response = HTTP.put("http://localhost:8080/card/#{id}", :body => card.to_json)
 
-# response = HTTP.delete("http://localhost:8080/flashcard/#{id}") 
+# response = HTTP.delete("http://localhost:8080/card/#{id}") 
 #
 #
 #
 
 # options = {}
 # OptionParser.new do |opts|
-#   opts.banner = "Usage: flashcards.rb [options]"
+#   opts.banner = "Usage: cards.rb [options]"
 
 #   opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
 #     options[:verbose] = v

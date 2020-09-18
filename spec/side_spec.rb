@@ -1,7 +1,7 @@
 ENV['APP_ENV'] = 'test'
 
 require 'polycard/side_controller'
-require 'polycard/flashcard_controller'
+require 'polycard/card_controller'
 require 'rack/test'
 
 describe SideApp do
@@ -11,48 +11,53 @@ describe SideApp do
   end
 
   before do
-    Flashcard.truncate(cascade: true)
+    Deck.truncate(cascade: true)
+    Card.truncate(cascade: true)
   end
 
   describe 'GET /side/:id' do
-    it "retrieves a side given a valid side locator" do
-      flashcard_id = Flashcard.insert
-      side_id = Side.insert(flashcard_id: flashcard_id, text: "something")
+    it "Retrieves a side given a valid side locator" do
+      deck_id = Deck.insert(name: 'test_deck')
+      card_id = Card.insert(deck_id: deck_id)
+      side_id = Side.insert(card_id: card_id, content: 'something')
+      puts side_id
       get("/side/#{side_id}")
       expect(last_response.status).to eq(200)
     end
 
-    it 'fails with 404 if the side does not exist' do
+    it 'Fails with 404 if the side does not exist' do
       get('/side/1234')
       expect(last_response.status).to eq(404)
       expect(last_response.body).to eq('No side with id 1234')
     end
   end
 
-  describe 'POST /flashcard/:flashcard_id/side' do
-    it "Creates a new side for a flashcard given a valid flashcard id" do
-      flashcard_id = Flashcard.insert
-      body = { text: 'something' } 
-      post("/flashcard/#{flashcard_id}/side", body.to_json)
+  describe 'POST /card/:card_id/side' do
+    it "Creates a new side for a card given a valid card id" do
+      deck_id = Deck.insert(name: 'test_deck')
+      card_id = Card.insert(deck_id: deck_id)
+      body = { content: 'something' } 
+      post("/card/#{card_id}/side", body.to_json)
       expect(last_response.status).to eq(200)
       side_id = JSON.parse(last_response.body)["side_id"]
-      side_text = JSON.parse(last_response.body)["side_text"]
-      expect(side_text).to eq(body[:text])
+      side_content = JSON.parse(last_response.body)["side_content"]
+      expect(side_content).to eq(body[:content])
       ds_side = Side[side_id]
-      expect(ds_side.text).to eq(side_text)
+      expect(ds_side.content).to eq(side_content)
     end
 
-    it "Fails with 404 if the flashcard does not exist" do
-      body = { text: 'something' } 
-      post("/flashcard/1234/side", body.to_json)
+    it "Fails with 404 if the card does not exist" do
+      body = { content: 'something' } 
+      post("/card/1234/side", body.to_json)
       expect(last_response.status).to eq(404)
     end
   end
 
   describe 'DELETE /side/:id' do
     it "Deletes a side given a valid side locator" do
-      flashcard_id = Flashcard.insert
-      side_id = Side.insert(flashcard_id: flashcard_id, text: "something")
+      deck_id = Deck.insert(name: 'test_deck')
+      card_id = Card.insert(deck_id: deck_id)
+      side_id = Side.insert(card_id: card_id, content: "something")
       delete("/side/#{side_id}")
       expect(Side[side_id]).to be(nil)
       expect(last_response.body).to eq('Deleted side.')
@@ -66,13 +71,14 @@ describe SideApp do
 
   describe 'PUT /side/:id' do
     it 'Updates an existing side given a valid side locator' do
-      flashcard_id = Flashcard.insert
-      side_id = Side.insert(flashcard_id: flashcard_id, text: 'something')
-      body = { text: 'something_else' } 
+      deck_id = Deck.insert(name: 'test_deck')
+      card_id = Card.insert(deck_id: deck_id)
+      side_id = Side.insert(card_id: card_id, content: 'something')
+      body = { content: 'something_else' } 
       put("/side/#{side_id}", body.to_json)
-      side_text = JSON.parse(last_response.body)["text"]
-      expect(side_text).to eq(body[:text])
-      expect(Side[side_id].text).to eq(body[:text])
+      side_content = JSON.parse(last_response.body)["content"]
+      expect(side_content).to eq(body[:content])
+      expect(Side[side_id].content).to eq(body[:content])
     end
   end
 end

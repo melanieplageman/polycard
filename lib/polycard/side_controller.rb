@@ -14,7 +14,7 @@ class SideApp < Sinatra::Base
   end
 
   error Sequel::ForeignKeyConstraintViolation do
-    halt 404, "Flashcard not found"
+    halt 404, "Card not found"
   end
 
   # R - Retrieve
@@ -25,12 +25,12 @@ class SideApp < Sinatra::Base
   end
 
   # C - Create
-  post '/flashcard/:flashcard_id/side' do |flashcard_id|
+  post '/card/:card_id/side' do |card_id|
     side = JSON.parse(request.body.read)
-    side_text = side["text"]
-    side_id = Side.insert(flashcard_id: flashcard_id, text: side_text)
-    response = {side_id: side_id, side_text: side_text}
-    headers "Location" => "/flashcard/#{flashcard_id}/side/#{side_id}"
+    side_content = side["content"]
+    side_id = Side.insert(card_id: card_id, content: side_content)
+    response = {side_id: side_id, side_content: side_content}
+    headers "Location" => "/card/#{card_id}/side/#{side_id}"
     body response.to_json
   end
 
@@ -44,16 +44,16 @@ class SideApp < Sinatra::Base
     'Deleted side.'
   end
 
-  # U - update (to update a flashcard, use multiple PUT sides)
+  # U - update (to update a card, use multiple PUT sides)
   put '/side/:id' do |side_id|
     side = Side[side_id]
     if side.nil?
       halt 404, 'Side not found'
     end
     updated_side = JSON.parse(request.body.read)
-    updated_text = updated_side["text"]
-    Side[side_id].update(text: updated_text)
-    response = {text: updated_text}
+    updated_content = updated_side["content"]
+    Side[side_id].update(content: updated_content)
+    response = {content: updated_content}
     response.to_json
   end
 end

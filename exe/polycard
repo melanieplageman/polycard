@@ -2,7 +2,7 @@
 
 require "bundler/setup"
 require 'sinatra'
-require 'polycard/flashcard_controller'
+require 'polycard/card_controller'
 require 'polycard/side_controller'
 
 set :run, false
@@ -11,7 +11,7 @@ class Main < Sinatra::Base
   set :bind, '0.0.0.0'
   set :port, 8080
 
-  use FlashcardApp
+  use CardApp 
   use SideApp
 end
 Main.run!
